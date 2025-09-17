@@ -1,4 +1,12 @@
-html {
+:root {
+  --text: #0d1b2aff;
+  --accent: #1b263bff;
+  --secondary: #415a77ff;
+  --primary: #778da9ff;
+  --background: #e0e1ddff;
+}
+
+* {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
