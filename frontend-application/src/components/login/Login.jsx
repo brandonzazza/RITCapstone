@@ -32,10 +32,14 @@ function Login() {
           <h2>{isLogin ? "Login to Your Account" : "Create a New Account"}</h2>
 
           <input type="email" placeholder="Email" required />
-          <input type="password" placeholder="Password" required />
 
           {/* Extra field for signup */}
           {!isLogin && <input type="text" placeholder="Username" required />}
+
+          <input type="password" placeholder="Password" required />
+          {!isLogin && (
+            <input type="text" placeholder="Re-enter Password" required />
+          )}
 
           <button type="submit">{isLogin ? "Login" : "Sign Up"}</button>
         </form>
