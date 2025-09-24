@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import { useState } from "react";
 import {
   Box,
@@ -13,21 +12,24 @@ import {
   IconButton,
   AppBar,
   Toolbar,
-  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
+import { CalendarIcon } from "@mui/x-date-pickers";
+import { EventNote } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 import DataCard from "../ProjectForm/ProjectForm";
 import MetricsCard from "../MetricsCard/MetricsCard";
 import ChartCard from "../ChartCard/ChartCard";
 import AttendeesTable from "../AttendeesTable/AttendeesTable";
 import Papa from "papaparse";
-import { CalendarIcon } from "@mui/x-date-pickers";
-import { EventNote, MenuBook } from "@mui/icons-material";
 
-// Dummy data
 const initialAttendees = [
   { name: "Alice", email: "alice@example.com", status: "Going" },
   { name: "Bob", email: "bob@example.com", status: "Not Going" },
@@ -35,9 +37,11 @@ const initialAttendees = [
 ];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [chartType, setChartType] = useState("pie");
   const [attendees, setAttendees] = useState(initialAttendees);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
@@ -77,76 +81,27 @@ const Dashboard = () => {
     });
   };
 
+  const handleLogout = () => {
+    // Clear session or token
+    console.log("Logged out");
+    navigate("/login");
+  };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "row" }}>
-      {/* Sidebar Drawer */}
-      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
-        <Box sx={{ width: 250 }} role="presentation">
-          <List>
-            <ListItemButton>
-              <ListItemIcon>
-                <CalendarIcon />
-              </ListItemIcon>
-              <ListItemText primary="Event" />
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemIcon>
-                <EventNote />
-              </ListItemIcon>
-              <ListItemText primary="Tasks" />
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Settings" />
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemIcon>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText primary="Logout" />
-            </ListItemButton>
-          </List>
-        </Box>
-      </Drawer>
-
       {/* Main Content */}
       <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-        {/* Full-width AppBar */}
-        <AppBar
-          position="sticky"
-          color="primary"
-          sx={{ width: "100%", boxSizing: "border-box" }}
-        >
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              onClick={toggleDrawer}
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Event Dashboard
-            </Typography>
-          </Toolbar>
-        </AppBar>
-
         {/* Dashboard Body */}
         <Box
           sx={{
-            width: "75%", // ~75% of screen width
-            mx: "auto", // center horizontally
+            width: "75%",
+            mx: "auto",
             py: 4,
             display: "flex",
             flexDirection: "column",
             gap: 6,
           }}
         >
-          {/* Project Info */}
           <DataCard Title="Event Info" />
 
           <Typography variant="h4" sx={{ textAlign: "center" }}>
@@ -155,13 +110,8 @@ const Dashboard = () => {
           <Grid
             container
             spacing={4}
-            sx={{
-              justifyContent: "center", // center the columns horizontally
-              alignItems: "flex-start", // optional, aligns items at top
-            }}
+            sx={{ justifyContent: "center", alignItems: "flex-start" }}
           >
-            {/* Metrics Column */}
-
             <Grid
               item
               xs={12}
@@ -182,7 +132,6 @@ const Dashboard = () => {
               </Box>
             </Grid>
 
-            {/* Chart Column */}
             <Grid
               item
               xs={12}
@@ -217,7 +166,6 @@ const Dashboard = () => {
             </Grid>
           </Grid>
 
-          {/* Attendees Table */}
           <AttendeesTable
             attendees={attendees}
             onAdd={() => {}}
@@ -227,6 +175,17 @@ const Dashboard = () => {
             onImport={handleImportCSV}
           />
         </Box>
+
+        {/* Settings Popout */}
+        <Dialog open={settingsOpen} onClose={() => setSettingsOpen(false)}>
+          <DialogTitle>Settings</DialogTitle>
+          <DialogContent>
+            <Typography>Settings content goes here</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setSettingsOpen(false)}>Close</Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Box>
   );

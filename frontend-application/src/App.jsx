@@ -2,8 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./components/landingpage/LandingPage";
 import Login from "./components/login/Login";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import MainLayout from "./components/MainLayout/MainLayout";
 import Dashboard from "./components/Dashboard/Dashboard";
-import "./App.css";
+import Tasks from "./components/Tasks/Tasks";
 
 function App() {
   return (
@@ -12,15 +13,18 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Protected Route */}
+        {/* Protected route with layout */}
         <Route
-          path="/dashboard"
+          path="/"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <MainLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="tasks" element={<Tasks />} />
+        </Route>
       </Routes>
     </Router>
   );
