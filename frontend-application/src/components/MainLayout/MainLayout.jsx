@@ -40,13 +40,23 @@ export default function MainLayout() {
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
         <Box sx={{ width: 250 }}>
           <List>
-            <ListItemButton onClick={() => navigate("/dashboard")}>
+            <ListItemButton
+              onClick={() => {
+                navigate("/dashboard");
+                setDrawerOpen(false);
+              }}
+            >
               <ListItemIcon>
                 <CalendarIcon />
               </ListItemIcon>
               <ListItemText primary="Event" />
             </ListItemButton>
-            <ListItemButton onClick={() => navigate("/tasks")}>
+            <ListItemButton
+              onClick={() => {
+                navigate("/tasks");
+                setDrawerOpen(false);
+              }}
+            >
               <ListItemIcon>
                 <EventNote />
               </ListItemIcon>

@@ -4,7 +4,7 @@ import Login from "./components/login/Login";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import MainLayout from "./components/MainLayout/MainLayout";
 import Dashboard from "./components/Dashboard/Dashboard";
-import Tasks from "./components/Tasks/Tasks";
+import TaskBoard from "./components/TaskBoard/TaskBoard";
 
 function App() {
   return (
@@ -23,7 +23,7 @@ function App() {
           }
         >
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="tasks" element={<Tasks />} />
+          <Route path="tasks" element={<TaskBoard />} />
         </Route>
       </Routes>
     </Router>
