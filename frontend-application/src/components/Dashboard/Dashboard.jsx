@@ -1,55 +1,43 @@
-import { useState } from "react";
 import {
   Box,
   Grid,
   Typography,
   Button,
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  IconButton,
-  AppBar,
-  Toolbar,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
-import MenuIcon from "@mui/icons-material/Menu";
-import { CalendarIcon } from "@mui/x-date-pickers";
-import { EventNote } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import Papa from "papaparse";
+import {
+  addAttendee,
+  deleteAttendee,
+  importAttendees,
+  changeChartType,
+} from "../../features/dashboard/dashboardSlice";
 import DataCard from "../ProjectForm/ProjectForm";
 import MetricsCard from "../MetricsCard/MetricsCard";
 import ChartCard from "../ChartCard/ChartCard";
 import AttendeesTable from "../AttendeesTable/AttendeesTable";
-import Papa from "papaparse";
-
-const initialAttendees = [
-  { name: "Alice", email: "alice@example.com", status: "Going" },
-  { name: "Bob", email: "bob@example.com", status: "Not Going" },
-  { name: "Charlie", email: "charlie@example.com", status: "Maybe" },
-];
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [chartType, setChartType] = useState("pie");
-  const [attendees, setAttendees] = useState(initialAttendees);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const attendees = useSelector((state) => state.dashboard.attendees);
+  const chartType = useSelector((state) => state.dashboard.chartType);
+
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
-
+  // Count metrics
   const metrics = ["Going", "Not Going", "Maybe"].map((status) => ({
     title: status,
     value: attendees.filter((a) => a.status === status).length,
   }));
 
+  // Chart data
   const chartData = {
     labels: metrics.map((m) => m.title),
     datasets: [
@@ -61,6 +49,7 @@ const Dashboard = () => {
     ],
   };
 
+  // CSV export
   const handleExportCSV = () => {
     const csv = Papa.unparse(attendees);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -73,25 +62,38 @@ const Dashboard = () => {
     document.body.removeChild(link);
   };
 
+  // CSV import
   const handleImportCSV = (file) => {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      complete: (results) => setAttendees((prev) => [...prev, ...results.data]),
+      complete: (results) => dispatch(importAttendees(results.data)),
     });
   };
 
+  // Add a sample attendee (you could wire this to a form)
+  const handleAdd = () => {
+    const newAttendee = {
+      name: "New Guest",
+      email: `guest${Date.now()}@example.com`,
+      status: "Maybe",
+    };
+    dispatch(addAttendee(newAttendee));
+  };
+
+  // Delete an attendee
+  const handleDelete = (email) => {
+    dispatch(deleteAttendee(email));
+  };
+
   const handleLogout = () => {
-    // Clear session or token
     console.log("Logged out");
     navigate("/login");
   };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "row" }}>
-      {/* Main Content */}
       <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-        {/* Dashboard Body */}
         <Box
           sx={{
             width: "75%",
@@ -107,11 +109,14 @@ const Dashboard = () => {
           <Typography variant="h4" sx={{ textAlign: "center" }}>
             Event Data
           </Typography>
+
+          {/* Metrics + Chart Section */}
           <Grid
             container
             spacing={4}
             sx={{ justifyContent: "center", alignItems: "flex-start" }}
           >
+            {/* Metrics Cards */}
             <Grid
               item
               xs={12}
@@ -132,6 +137,7 @@ const Dashboard = () => {
               </Box>
             </Grid>
 
+            {/* Chart Section */}
             <Grid
               item
               xs={12}
@@ -150,14 +156,14 @@ const Dashboard = () => {
                 <Box>
                   <Button
                     variant="contained"
-                    onClick={() => setChartType("pie")}
+                    onClick={() => dispatch(changeChartType("pie"))}
                     sx={{ mr: 1 }}
                   >
                     Pie
                   </Button>
                   <Button
                     variant="contained"
-                    onClick={() => setChartType("bar")}
+                    onClick={() => dispatch(changeChartType("bar"))}
                   >
                     Bar
                   </Button>
@@ -166,11 +172,11 @@ const Dashboard = () => {
             </Grid>
           </Grid>
 
+          {/* Attendees Table */}
           <AttendeesTable
             attendees={attendees}
-            onAdd={() => {}}
-            onEdit={() => {}}
-            onDelete={() => {}}
+            onAdd={handleAdd}
+            onDelete={handleDelete}
             onExport={handleExportCSV}
             onImport={handleImportCSV}
           />

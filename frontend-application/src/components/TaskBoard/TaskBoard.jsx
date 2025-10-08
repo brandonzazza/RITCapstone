@@ -19,86 +19,66 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useSelector, useDispatch } from "react-redux";
+import { addTask, moveTask, deleteTask } from "../../features/tasks/tasksSlice";
 
 export default function TaskBoard() {
-  const [columns, setColumns] = useState({
-    tasks: {
-      name: "Tasks",
-      items: [{ id: "1", content: "Set up CI/CD" }],
-    },
-    inProgress: {
-      name: "In Progress",
-      items: [{ id: "2", content: "Implement auth" }],
-    },
-    complete: {
-      name: "Complete",
-      items: [{ id: "3", content: "Design dashboard" }],
-    },
-  });
+  const dispatch = useDispatch();
 
+  // Get Redux state for all columns
+  const columns = useSelector((state) => state.tasks.tasks);
+
+  // Local input state
   const [newTask, setNewTask] = useState({ column: "tasks", text: "" });
 
+  // Handle adding a new task
+  const handleAddTask = () => {
+    if (!newTask.text.trim()) return;
+    const id = Date.now().toString();
+    dispatch(
+      addTask({
+        column: newTask.column,
+        task: { id, content: newTask.text.trim() },
+      })
+    );
+    setNewTask({ column: "tasks", text: "" });
+  };
+
+  // Handle deleting a task
+  const handleDeleteTask = (columnId, taskId) => {
+    dispatch(deleteTask({ column: columnId, taskId }));
+  };
+
+  // Handle drag & drop between columns
   const onDragEnd = (result) => {
     if (!result.destination) return;
 
     const { source, destination } = result;
 
-    if (source.droppableId !== destination.droppableId) {
-      const sourceColumn = columns[source.droppableId];
-      const destColumn = columns[destination.droppableId];
-      const sourceItems = [...sourceColumn.items];
-      const destItems = [...destColumn.items];
-      const [removed] = sourceItems.splice(source.index, 1);
-      destItems.splice(destination.index, 0, removed);
-      setColumns({
-        ...columns,
-        [source.droppableId]: { ...sourceColumn, items: sourceItems },
-        [destination.droppableId]: { ...destColumn, items: destItems },
-      });
-    } else {
-      const column = columns[source.droppableId];
-      const copiedItems = [...column.items];
-      const [removed] = copiedItems.splice(source.index, 1);
-      copiedItems.splice(destination.index, 0, removed);
-      setColumns({
-        ...columns,
-        [source.droppableId]: { ...column, items: copiedItems },
-      });
-    }
-  };
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    )
+      return;
 
-  const handleAddTask = () => {
-    if (!newTask.text.trim()) return;
-    const id = Date.now().toString();
-    const updatedColumn = {
-      ...columns[newTask.column],
-      items: [
-        ...columns[newTask.column].items,
-        { id, content: newTask.text.trim() },
-      ],
-    };
-    setColumns({ ...columns, [newTask.column]: updatedColumn });
-    setNewTask({ column: "tasks", text: "" });
-  };
-
-  const handleDeleteTask = (columnId, taskId) => {
-    const updatedColumn = {
-      ...columns[columnId],
-      items: columns[columnId].items.filter((item) => item.id !== taskId),
-    };
-    setColumns({ ...columns, [columnId]: updatedColumn });
+    dispatch(
+      moveTask({
+        from: source.droppableId,
+        to: destination.droppableId,
+        sourceIndex: source.index,
+        destinationIndex: destination.index,
+      })
+    );
   };
 
   // Chart data
   const totalTasks =
-    columns.tasks.items.length +
-    columns.inProgress.items.length +
-    columns.complete.items.length;
+    columns.tasks.length + columns.inProgress.length + columns.complete.length;
 
   const data = [
-    { name: "Tasks", value: columns.tasks.items.length },
-    { name: "In Progress", value: columns.inProgress.items.length },
-    { name: "Complete", value: columns.complete.items.length },
+    { name: "Tasks", value: columns.tasks.length },
+    { name: "In Progress", value: columns.inProgress.length },
+    { name: "Complete", value: columns.complete.length },
   ];
 
   const COLORS = ["#2196f3", "#ff9800", "#4caf50"];
@@ -153,7 +133,7 @@ export default function TaskBoard() {
         </Grid>
       </Grid>
 
-      {/* Main Layout */}
+      {/* Main Columns */}
       <Box
         sx={{
           flexGrow: 1,
@@ -164,7 +144,7 @@ export default function TaskBoard() {
         }}
       >
         <DragDropContext onDragEnd={onDragEnd}>
-          {Object.entries(columns).map(([columnId, column]) => (
+          {Object.entries(columns).map(([columnId, items]) => (
             <Box
               key={columnId}
               sx={{
@@ -174,14 +154,18 @@ export default function TaskBoard() {
                 p: 2,
                 display: "flex",
                 flexDirection: "column",
-                minHeight: "calc(100vh - 300px)", // fill most of the page
+                minHeight: "calc(100vh - 300px)",
               }}
             >
               <Typography
                 variant="h6"
                 sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}
               >
-                {column.name}
+                {columnId === "tasks"
+                  ? "Tasks"
+                  : columnId === "inProgress"
+                  ? "In Progress"
+                  : "Complete"}
               </Typography>
 
               <Droppable droppableId={columnId}>
@@ -199,7 +183,7 @@ export default function TaskBoard() {
                       overflowY: "auto",
                     }}
                   >
-                    {column.items.map((item, index) => (
+                    {items.map((item, index) => (
                       <Draggable
                         key={item.id}
                         draggableId={item.id}
@@ -247,7 +231,7 @@ export default function TaskBoard() {
         </DragDropContext>
       </Box>
 
-      {/* Progress Chart */}
+      {/* Chart */}
       <Box
         sx={{
           height: 300,
