@@ -29,8 +29,10 @@ export default function MainLayout() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+
   const handleLogout = () => {
-    // clear token/session
+    // Remove the JWT token from localStorage and redirect to login
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
