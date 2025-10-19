@@ -1,22 +1,29 @@
-import React, { useState } from "react";
+import React from "react";
+import { TextField, Button, Typography, Box } from "@mui/material";
+import { useSelector, useDispatch } from "react-redux";
 import {
-  TextField,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  Box,
-} from "@mui/material";
+  addAttendee,
+  deleteAttendee,
+  importAttendees,
+  changeChartType,
+  updateField,
+} from "../../features/events/eventsSlice";
 
 const ProjectForm = (props) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [organizer, setOrganizer] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const dispatch = useDispatch();
+
+  const { projectName, projectDescription, projectOrganizer } = useSelector(
+    (state) => state.events
+  );
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    dispatch(updateField({ field: name, value }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    // Add update push to database here
   };
 
   return (
@@ -31,30 +38,34 @@ const ProjectForm = (props) => {
       <Typography variant="h4" sx={{ textAlign: "center" }}>
         {props.Title}
       </Typography>
+
       {/* Form */}
       <form onSubmit={handleSubmit} style={{ width: "100%", maxWidth: 500 }}>
         <TextField
           label="Project Name"
+          name="projectName"
           fullWidth
           margin="normal"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={projectName}
+          onChange={handleChange}
         />
         <TextField
           label="Project Description"
+          name="projectDescription"
           fullWidth
           multiline
           rows={4}
           margin="normal"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          value={projectDescription}
+          onChange={handleChange}
         />
         <TextField
           label="Organizer"
+          name="projectOrganizer"
           fullWidth
           margin="normal"
-          value={organizer}
-          onChange={(e) => setOrganizer(e.target.value)}
+          value={projectOrganizer}
+          onChange={handleChange}
         />
         <Button type="submit" variant="contained" sx={{ mt: 2 }}>
           Save

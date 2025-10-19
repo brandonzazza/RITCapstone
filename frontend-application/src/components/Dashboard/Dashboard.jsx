@@ -15,6 +15,7 @@ import {
   deleteAttendee,
   importAttendees,
   changeChartType,
+  updateField,
 } from "../../features/events/eventsSlice";
 import DataCard from "../ProjectForm/ProjectForm";
 import MetricsCard from "../MetricsCard/MetricsCard";
@@ -28,7 +29,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const attendees = useSelector((state) => state.events.attendees);
   const chartType = useSelector((state) => state.events.chartType);
-
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Count metrics
@@ -86,9 +86,9 @@ const Dashboard = () => {
     dispatch(deleteAttendee(email));
   };
 
-  const handleLogout = () => {
-    console.log("Logged out");
-    navigate("/login");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    dispatch(updateProjectField({ field: name, value }));
   };
 
   return (

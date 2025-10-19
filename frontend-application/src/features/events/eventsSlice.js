@@ -3,6 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   attendees: [],
   chartType: "pie",
+  projectName: "",
+  projectDescription: "",
+  projectOrganizer: "",
 };
 
 const dashboardSlice = createSlice({
@@ -23,10 +26,19 @@ const dashboardSlice = createSlice({
     changeChartType: (state, action) => {
       state.chartType = action.payload;
     },
+    updateField: (state, action) => {
+      const { field, value } = action.payload;
+      state[field] = value;
+    },
   },
 });
 
-export const { addAttendee, deleteAttendee, importAttendees, changeChartType } =
-  dashboardSlice.actions;
+export const {
+  addAttendee,
+  deleteAttendee,
+  importAttendees,
+  changeChartType,
+  updateField,
+} = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
