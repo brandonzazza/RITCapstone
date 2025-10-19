@@ -1,16 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  attendees: [
-    { name: "Alice", email: "alice@example.com", status: "Going" },
-    { name: "Bob", email: "bob@example.com", status: "Not Going" },
-    { name: "Charlie", email: "charlie@example.com", status: "Maybe" },
-  ],
+  attendees: [],
   chartType: "pie",
 };
 
 const dashboardSlice = createSlice({
-  name: "dashboard",
+  name: "events",
   initialState,
   reducers: {
     addAttendee: (state, action) => {

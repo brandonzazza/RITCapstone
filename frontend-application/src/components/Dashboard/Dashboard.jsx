@@ -15,7 +15,7 @@ import {
   deleteAttendee,
   importAttendees,
   changeChartType,
-} from "../../features/dashboard/dashboardSlice";
+} from "../../features/events/eventsSlice";
 import DataCard from "../ProjectForm/ProjectForm";
 import MetricsCard from "../MetricsCard/MetricsCard";
 import ChartCard from "../ChartCard/ChartCard";
@@ -26,8 +26,8 @@ import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const attendees = useSelector((state) => state.dashboard.attendees);
-  const chartType = useSelector((state) => state.dashboard.chartType);
+  const attendees = useSelector((state) => state.events.attendees);
+  const chartType = useSelector((state) => state.events.chartType);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
 
