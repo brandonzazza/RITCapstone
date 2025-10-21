@@ -6,7 +6,7 @@ function Header() {
   return (
     <header className={styles.header}>
       <Link to="/" className={styles.logo}>
-        MyApp
+        TaskPro
       </Link>
       <button className={styles.loginButton} onClick={() => navigate("/login")}>
         Login / Signup

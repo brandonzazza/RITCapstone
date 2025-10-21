@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "../Header/Header.jsx";
 import styles from "./Login.module.css";
+import loginImage from "../../assets/login.jpg";
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -61,7 +62,7 @@ function Login() {
 
       // Redirect after a short delay
       setTimeout(() => {
-        window.location.href = "/dashboard"; // change route as needed
+        window.location.href = "/dashboard";
       }, 1000);
     } catch (err) {
       setMessage(`${err.message}`);
@@ -75,6 +76,14 @@ function Login() {
       <Header />
 
       <div className={styles.container}>
+        {/* Image on top */}
+        <div className={styles.imageContainer}>
+          <img
+            src={loginImage}
+            alt="Login illustration"
+            className={styles.image}
+          />
+        </div>
         {/* Tabs */}
         <div className={styles.tabs}>
           <div
