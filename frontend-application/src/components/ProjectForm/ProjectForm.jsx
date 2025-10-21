@@ -29,6 +29,7 @@ const ProjectForm = (props) => {
   return (
     <Box
       sx={{
+        backgroundColor: "white",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

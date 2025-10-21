@@ -20,11 +20,44 @@ ChartJS.register(
 );
 
 function ChartCard({ data, type }) {
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false, // allows full flex fill
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: { boxWidth: 15, padding: 15 },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1, // ensure whole numbers
+          callback: (value) => (Number.isInteger(value) ? value : null),
+        },
+      },
+    },
+  };
+
   return (
-    <Card sx={{ m: 1, p: 2 }}>
-      <CardContent>
-        <div style={{ maxWidth: "100%", maxHeight: 300, margin: "0 auto" }}>
-          {type === "pie" ? <Pie data={data} /> : <Bar data={data} />}
+    <Card
+      sx={{
+        width: "100%",
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: 2,
+        boxShadow: 3,
+      }}
+    >
+      <CardContent sx={{ flexGrow: 1, p: 2 }}>
+        <div style={{ width: "100%", height: "100%" }}>
+          {type === "pie" ? (
+            <Pie data={data} options={chartOptions} />
+          ) : (
+            <Bar data={data} options={chartOptions} />
+          )}
         </div>
       </CardContent>
     </Card>

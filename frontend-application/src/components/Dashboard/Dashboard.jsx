@@ -7,6 +7,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Paper,
+  Divider,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import Papa from "papaparse";
@@ -71,7 +73,6 @@ const Dashboard = () => {
     });
   };
 
-  // Add a sample attendee (you could wire this to a form)
   const handleAdd = () => {
     const newAttendee = {
       name: "New Guest",
@@ -81,98 +82,116 @@ const Dashboard = () => {
     dispatch(addAttendee(newAttendee));
   };
 
-  // Delete an attendee
   const handleDelete = (email) => {
     dispatch(deleteAttendee(email));
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    dispatch(updateProjectField({ field: name, value }));
-  };
-
   return (
-    <Box sx={{ display: "flex", flexDirection: "row" }}>
-      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-        <Box
+    <Box
+      sx={{
+        width: "100%",
+        minHeight: "100vh",
+        py: 6,
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 1200,
+          px: { xs: 2, sm: 4, md: 6 },
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
+        }}
+      >
+        {/*Event Info */}
+        <Paper
+          elevation={3}
           sx={{
-            width: "75%",
-            mx: "auto",
-            py: 4,
-            display: "flex",
-            flexDirection: "column",
-            gap: 6,
+            p: 4,
+            borderRadius: 3,
+            backgroundColor: "grey.250",
           }}
         >
           <DataCard Title="Event Info" />
+        </Paper>
 
-          <Typography variant="h4" sx={{ textAlign: "center" }}>
-            Event Data
-          </Typography>
-
-          {/* Metrics + Chart Section */}
-          <Grid
-            container
-            spacing={4}
-            sx={{ justifyContent: "center", alignItems: "flex-start" }}
-          >
-            {/* Metrics Cards */}
+        {/*Metrics + Chart Section */}
+        <Paper
+          elevation={4}
+          sx={{
+            p: 4,
+            borderRadius: 3,
+            backgroundColor: "grey.250",
+          }}
+        >
+          <Grid container spacing={4} alignItems="stretch">
+            {" "}
+            {/* stretch columns vertically */}
+            {/* Metrics Cards - Left Side */}
             <Grid
               item
               xs={12}
               md={4}
-              sx={{ display: "flex", justifyContent: "center" }}
+              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 2,
-                  justifyContent: "space-between",
-                }}
-              >
-                {metrics.map((m, i) => (
-                  <MetricsCard key={i} title={m.title} value={m.value} />
-                ))}
-              </Box>
+              {metrics.map((m, i) => (
+                <MetricsCard key={i} title={m.title} value={m.value} />
+              ))}
             </Grid>
-
-            {/* Chart Section */}
+            {/* Chart Section - Right Side */}
             <Grid
               item
               xs={12}
               md={8}
-              sx={{ display: "flex", justifyContent: "center" }}
+              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             >
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 2,
+                  justifyContent: "center", // center horizontally
+                  flexGrow: 1, // fill available vertical space
+                  width: "100%",
                 }}
               >
-                <ChartCard data={chartData} type={chartType} />
-                <Box>
-                  <Button
-                    variant="contained"
-                    onClick={() => dispatch(changeChartType("pie"))}
-                    sx={{ mr: 1 }}
-                  >
-                    Pie
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={() => dispatch(changeChartType("bar"))}
-                  >
-                    Bar
-                  </Button>
-                </Box>
+                <ChartCard
+                  data={chartData}
+                  type={chartType}
+                  sx={{ width: "100%", maxWidth: 700, flexGrow: 1 }}
+                />
+              </Box>
+
+              <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+                <Button
+                  variant={chartType === "pie" ? "contained" : "outlined"}
+                  color="primary"
+                  onClick={() => dispatch(changeChartType("pie"))}
+                >
+                  Pie Chart
+                </Button>
+                <Button
+                  variant={chartType === "bar" ? "contained" : "outlined"}
+                  color="primary"
+                  onClick={() => dispatch(changeChartType("bar"))}
+                >
+                  Bar Chart
+                </Button>
               </Box>
             </Grid>
           </Grid>
+        </Paper>
 
-          {/* Attendees Table */}
+        {/*Attendees Table */}
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            borderRadius: 3,
+            backgroundColor: "grey.250",
+          }}
+        >
           <AttendeesTable
             attendees={attendees}
             onAdd={handleAdd}
@@ -180,9 +199,9 @@ const Dashboard = () => {
             onExport={handleExportCSV}
             onImport={handleImportCSV}
           />
-        </Box>
+        </Paper>
 
-        {/* Settings Popout */}
+        {/* ⚙️ Settings Dialog */}
         <Dialog open={settingsOpen} onClose={() => setSettingsOpen(false)}>
           <DialogTitle>Settings</DialogTitle>
           <DialogContent>
